@@ -5,6 +5,7 @@ import {ToastContainer, toast} from "react-toastify";
 import {registerRoute} from "../utils/APIRoutes";
 import {useNavigate} from "react-router-dom";
 import {Button, Input} from "@nextui-org/react";
+import '../css/style.css'
 
 
 const RegistrPage = () => {

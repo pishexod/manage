@@ -4,6 +4,7 @@ import {loginRoute} from "../utils/APIRoutes";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import {Button, Input} from "@nextui-org/react";
+import '../css/style.css'
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");

@@ -1,38 +1,42 @@
-import React, { useState } from 'react';
-import { Button, Modal, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
-import { Box } from '../components/Box'
-import { styled } from '@mui/system';
+import React, {useState} from 'react';
+import {Button, Modal, FormControl, InputLabel, Select, MenuItem} from '@mui/material';
+import {DataGrid} from '@mui/x-data-grid';
+import {Box} from '../components/Box'
+import {styled} from '@mui/system';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
+import '../css/style.css'
 import App from '../components/App';
+import axios from "axios";
+import {createTraining} from "../utils/APIRoutes";
+import moment from "moment";
 
 const TrainingSchedule = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [gridData, setGridData] = useState([]);
     const [selectedRow, setSelectedRow] = useState(null);
     const [formValues, setFormValues] = useState({
-        number: '',
-        norm: '',
+        platoon: '',
+        exercice: '',
         date: null,
     });
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'number', headerName: '№ взводу', width: 150 },
-        { field: 'norm', headerName: 'Норматив', width: 150 },
+        {field: 'id', headerName: 'ID', width: 70},
+        {field: 'platoon', headerName: '№ взводу', width: 150},
+        {field: 'exercise', headerName: 'Норматив', width: 150},
         {
             field: 'date',
             headerName: 'Дата',
             width: 150,
-            valueFormatter: (params) => new Date(params.value).toLocaleDateString(),
+            valueFormatter: (params) =>new Date(params.value),
         },
     ];
 
     const handleRowClick = (row) => {
         setSelectedRow(row.id);
         setFormValues({
+            id: gridData.length + 1,
             number: row.number,
             norm: row.norm,
             date: new Date(row.date),
@@ -40,35 +44,23 @@ const TrainingSchedule = () => {
         setIsModalOpen(true);
     };
 
-    const handleAddRow = () => {
+    const handleAddRow = async (event) => {
+        event.preventDefault();
         const newRow = {
             id: gridData.length + 1,
-            number: formValues.number,
-            norm: formValues.norm,
-            date: formValues.date,
+            platoon: formValues.number,
+            exercise: formValues.norm,
+            date: moment(formValues.date).format('MM-DD-YYYY'),
         };
         setGridData((prevData) => [...prevData, newRow]);
         resetFormValues();
         closeModal();
-    };
-
-    const handleUpdateRow = () => {
-        const updatedRow = {
-            id: selectedRow,
-            number: formValues.number,
-            norm: formValues.norm,
-            date: formValues.date,
-        };
-        const updatedData = gridData.map((row) => (row.id === selectedRow ? updatedRow : row));
-        setGridData(updatedData);
-        resetFormValues();
-        closeModal();
-    };
-    const handleDeleteRow = () => {
-        const updatedData = gridData.filter((row) => row.id !== selectedRow);
-        setGridData(updatedData);
-        resetFormValues();
-        closeModal();
+        try {
+            console.log(newRow.platoon, newRow.exercise, newRow.date.toString())
+            const response = await axios.post(createTraining, newRow);
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     const resetFormValues = () => {
@@ -95,7 +87,7 @@ const TrainingSchedule = () => {
     };
 
     const handleFormInputChange = (event) => {
-        const { name, value } = event.target;
+        const {name, value} = event.target;
         setFormValues((prevValues) => ({
             ...prevValues,
             [name]: value,
@@ -111,8 +103,8 @@ const TrainingSchedule = () => {
 
     return (
         <>
-            <App />
-            <Box sx={{ px: 12, mt: '0.1vh', '@media (max-width: 600px)': { px: 10 } }}>
+            <App/>
+            <Box sx={{px: 12, mt: '0.1vh', '@media (max-width: 600px)': {px: 10}}}>
                 <Container>
                     <h1>Розклад здачі нормативів</h1>
                     <Button onClick={openModal} variant="contained" color="primary">
@@ -145,7 +137,7 @@ const TrainingSchedule = () => {
                                         dateFormat="dd.MM.yyyy"
                                         required
                                         placeholderText="Вибрати дату"
-                                        style={{ width: '100%' }}
+                                        style={{width: '100%'}}
                                     />
                                 </StyledFormControl>
                                 <StyledButtonGroup>

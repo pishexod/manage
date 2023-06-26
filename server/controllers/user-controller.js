@@ -3,6 +3,7 @@ require('dotenv').config()
 
 const addSoldiers = async (req, res) => {
     let {user_id, platoon, company, name, surname, soldier_rank, level_physical_fitness} = req.body;
+    console.log(req.body)
     try {
         let soldier = await db.soldiers.findOne({
             where: {

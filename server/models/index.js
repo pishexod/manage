@@ -14,7 +14,12 @@ db.sequelize = sequelize;
 
 db.users = require('./user-model.js')(sequelize, DataTypes);
 db.soldiers = require('./soldier-model')(sequelize, DataTypes);
-db.sequelize.sync({force: false}).then(() => {
+db.train = require('./train-model')(sequelize, DataTypes);
+db.platoon = require('./platoon-model')(sequelize, DataTypes);
+
+db.platoon.belongsTo(db.soldiers, {foreignKey: 'commander_id', onDelete: 'CASCADE'});
+
+db.sequelize.sync({alter:true,force: false}).then(() => {
     console.log('re-sync done')
 });
 module.exports = db;

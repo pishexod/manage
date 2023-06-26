@@ -6,6 +6,8 @@ import App from "../components/App";
 import {Text, Spacer} from "@nextui-org/react"
 import {Box} from "../components/Box"
 import {styled} from '@mui/system';
+import '../css/style.css'
+
 
 
 const Subtitle = styled("p")`

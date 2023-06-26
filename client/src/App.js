@@ -7,6 +7,7 @@ import StatisticPage from "./pages/StatisticsPage";
 import TrainingSchedule from "./pages/TrainingSchedule";
 import PhysicalPage from "./pages/PhysicalPage";
 import ManageSoldiersPage from "./pages/ManageSoldiersPage";
+import './css/style.css'
 function App() {
   return (
       <BrowserRouter>

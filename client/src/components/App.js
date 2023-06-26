@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Navbar, Button, Text } from '@nextui-org/react';
-import { Layout } from './Layout.js';
-import { AcmeLogo } from './AcmeLogo.js';
-import { styled } from '@nextui-org/react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {Navbar, Button, Text} from '@nextui-org/react';
+import {Layout} from './Layout.js';
+import {AcmeLogo} from './AcmeLogo.js';
+import {styled} from '@nextui-org/react';
+import {useNavigate, useLocation} from 'react-router-dom';
+import '../css/style.css'
 
-const StyledNavbar = styled(Navbar, ({ theme, isBordered }) => ({
+const StyledNavbar = styled(Navbar, ({theme, isBordered}) => ({
     position: 'sticky',
     top: 0,
     width: '100%',
@@ -18,6 +19,7 @@ const StyledNavbar = styled(Navbar, ({ theme, isBordered }) => ({
     transform: 'translateY(0)',
     transformOrigin: 'top',
     boxShadow: '0 2px 4px rgba(182,24,24,0.8)',
+    fontFamily: 'Arial, sans-serif',
 }));
 
 export default function App() {
@@ -59,7 +61,7 @@ export default function App() {
                 }}
             >
                 <Navbar.Brand>
-                    <AcmeLogo />
+                    <AcmeLogo/>
                     <Text b color="inherit" hideIn="xs">
                         Фіз. підготовка
                     </Text>
