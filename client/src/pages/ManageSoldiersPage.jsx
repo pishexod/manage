@@ -13,6 +13,7 @@ import {
 } from '../utils/APIRoutes';
 import {Typography, Accordion, AccordionSummary, AccordionDetails} from '@mui/material';
 import App from "../components/App";
+import {styled} from "@mui/system";
 
 const ManageSoldiersPage = () => {
     const [platoons, setPlatoons] = useState([]);
@@ -111,15 +112,13 @@ const ManageSoldiersPage = () => {
                 soldier_rank: commanderRank,
                 level_physical_fitness: 'ok',
             });
-            soldiers.push(responseCommander.data.soldier)
-            console.log(responseCommander.data);
             const response = await axios.post(createPlatoon, {
                 company: parsedUser.company,
                 platoon_number: platoonNumber,
                 commander_id: responseCommander.data.soldier.soldier_id,
             });
-            console.log(response.data);
-            platoons.push(response.data.platoon)
+            await fetchPlatoons();
+            await fetchSoldiers();
             setPlatoonNumber('');
             setCommanderName('');
             setCommanderSurname('');
@@ -141,126 +140,132 @@ const ManageSoldiersPage = () => {
         <>
             <App/>
             <Box css={{px: '$12', mt: '0.1vh', '@xsMax': {px: '$10'}}}>
-                <div className="container">
-                    <div className="button-row">
-                        <button className="btn" onClick={() => setShowAddSoldierModal(true)}>
-                            Додати в/с
-                        </button>
-                        <button className="btn" onClick={() => setShowCreatePlatoonModal(true)}>
-                            Створити взвод
-                        </button>
-                        <Modal
-                            isOpen={showAddSoldierModal}
-                            onRequestClose={() => setShowAddSoldierModal(false)}
-                            contentLabel="Додати в/с"
-                            className="modal"
-                            overlayClassName="modal-overlay"
-                        >
-                            <h3>Додати солдата</h3>
-                            <select
-                                value={selectedPlatoon}
-                                onChange={(e) => setSelectedPlatoon(e.target.value)}
-                            >
-                                <option value="">Виберіть взвод</option>
-                                {platoons.map((platoon) => (
-                                    <option key={platoon.platoon_id} value={platoon.platoon_number}>
-                                        {platoon.platoon_number}
-                                    </option>
-                                ))}
-                            </select>
-                            <br/>
-                            <input
-                                type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                placeholder="Ім'я"
-                            />
-                            <br/>
-                            <input
-                                type="text"
-                                value={surname}
-                                onChange={(e) => setSurname(e.target.value)}
-                                placeholder="Прізвище"
-                            />
-                            <br/>
-                            <input
-                                type="text"
-                                value={soldierRank}
-                                onChange={(e) => setSoldierRank(e.target.value)}
-                                placeholder="Ранг солдата"
-                            />
-                            <br/>
-                            <input
-                                type="text"
-                                value={levelPhysicalFitness}
-                                onChange={(e) => setLevelPhysicalFitness(e.target.value)}
-                                placeholder="Рівень фізичної підготовки"
-                            />
-                            <br/>
-                            <button className="btn" onClick={handleAddSoldier}>
+                <Container>
+                    <div className="container">
+                        <div className="button-row">
+                            <button className="btn" onClick={() => setShowAddSoldierModal(true)}>
                                 Додати в/с
                             </button>
-                            <button className="btn" onClick={() => setShowAddSoldierModal(false)}>
-                                Закрити
+                            <button className="btn" onClick={() => setShowCreatePlatoonModal(true)}>
+                                Створити взвод
                             </button>
-                        </Modal>
+                            <Modal
+                                isOpen={showAddSoldierModal}
+                                onRequestClose={() => setShowAddSoldierModal(false)}
+                                contentLabel="Додати в/с"
+                                className="modal"
+                                overlayClassName="modal-overlay"
+                            >
+                                <h3>Додати солдата</h3>
+                                <select
+                                    value={selectedPlatoon}
+                                    onChange={(e) => setSelectedPlatoon(e.target.value)}
+                                >
+                                    <option value="">Виберіть взвод</option>
+                                    {platoons.map((platoon) => (
+                                        <option key={platoon.platoon_id} value={platoon.platoon_number}>
+                                            {platoon.platoon_number}
+                                        </option>
+                                    ))}
+                                </select>
+                                <br/>
+                                <input
+                                    type="text"
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    placeholder="Ім'я"
+                                />
+                                <br/>
+                                <input
+                                    type="text"
+                                    value={surname}
+                                    onChange={(e) => setSurname(e.target.value)}
+                                    placeholder="Прізвище"
+                                />
+                                <br/>
+                                <input
+                                    type="text"
+                                    value={soldierRank}
+                                    onChange={(e) => setSoldierRank(e.target.value)}
+                                    placeholder="Ранг солдата"
+                                />
+                                <br/>
+                                <input
+                                    type="text"
+                                    value={levelPhysicalFitness}
+                                    onChange={(e) => setLevelPhysicalFitness(e.target.value)}
+                                    placeholder="Рівень фізичної підготовки"
+                                />
+                                <br/>
+                                <button className="btn" onClick={handleAddSoldier}>
+                                    Додати в/с
+                                </button>
+                                <button className="btn" onClick={() => setShowAddSoldierModal(false)}>
+                                    Закрити
+                                </button>
+                            </Modal>
+                        </div>
+
                     </div>
 
-                </div>
-
-                <Modal
-                    isOpen={showCreatePlatoonModal}
-                    onRequestClose={() => setShowCreatePlatoonModal(false)}
-                    contentLabel="Створити взвод"
-                    className="modal"
-                    overlayClassName="modal-overlay"
-                >
-                    <h3>Створити взвод</h3>
-                    <input
-                        type="text"
-                        value={platoonNumber}
-                        onChange={(e) => setPlatoonNumber(e.target.value)}
-                        placeholder="Номер взводу"
-                    />
-                    <br/>
-                    <input
-                        type="text"
-                        value={commanderName}
-                        onChange={(e) => setCommanderName(e.target.value)}
-                        placeholder="Ім'я командира"
-                    />
-                    <br/>
-                    <input
-                        type="text"
-                        value={commanderSurname}
-                        onChange={(e) => setCommanderSurname(e.target.value)}
-                        placeholder="Прізвище командира"
-                    />
-                    <br/>
-                    <input
-                        type="text"
-                        value={commanderRank}
-                        onChange={(e) => setCommanderRank(e.target.value)}
-                        placeholder="Ранг командира"
-                    />
-                    <br/>
-                    <button className="btn" onClick={handleCreatePlatoon}>
-                        Створити взвод
-                    </button>
-                    <button className="btn" onClick={() => setShowCreatePlatoonModal(false)}>
-                        Закрити
-                    </button>
-                </Modal>
-                {platoons.length > 0 ? (
-                    <ul>
-                        {platoons.map((platoon) => (
-                            <li key={platoon.platoon_id}>
-                                <Accordion>
+                    <Modal
+                        isOpen={showCreatePlatoonModal}
+                        onRequestClose={() => setShowCreatePlatoonModal(false)}
+                        contentLabel="Створити взвод"
+                        className="modal"
+                        overlayClassName="modal-overlay"
+                    >
+                        <h3>Створити взвод</h3>
+                        <input
+                            type="text"
+                            value={platoonNumber}
+                            onChange={(e) => setPlatoonNumber(e.target.value)}
+                            placeholder="Номер взводу"
+                        />
+                        <br/>
+                        <input
+                            type="text"
+                            value={commanderName}
+                            onChange={(e) => setCommanderName(e.target.value)}
+                            placeholder="Ім'я командира"
+                        />
+                        <br/>
+                        <input
+                            type="text"
+                            value={commanderSurname}
+                            onChange={(e) => setCommanderSurname(e.target.value)}
+                            placeholder="Прізвище командира"
+                        />
+                        <br/>
+                        <input
+                            type="text"
+                            value={commanderRank}
+                            onChange={(e) => setCommanderRank(e.target.value)}
+                            placeholder="Ранг командира"
+                        />
+                        <br/>
+                        <button className="btn" onClick={handleCreatePlatoon}>
+                            Створити взвод
+                        </button>
+                        <button className="btn" onClick={() => setShowCreatePlatoonModal(false)}>
+                            Закрити
+                        </button>
+                    </Modal>
+                    {platoons.length > 0 ? (
+                        <ul>
+                            {platoons.map((platoon) => (
+                                <Accordion style={{
+                                    marginBottom: "20px",
+                                    backgroundColor: "#D3D3D3",
+                                    color: "#000000",
+                                    border: "none",
+                                    borderRadius: "4px"
+                                }}>
                                     <AccordionSummary expandIcon={<ExpandMoreIcon/>} aria-controls="platoon-content"
                                                       id="platoon-header">
                                         <Typography variant="subtitle1">Взвод №{platoon.platoon_number}</Typography>
                                     </AccordionSummary>
-                                    <AccordionDetails>
+                                    <AccordionDetails style={{background: "#ffffff"}}>
                                         {soldiers
                                             .filter((soldier) => soldier.platoon === platoon.platoon_number)
                                             .length > 0 ? (
@@ -280,15 +285,20 @@ const ManageSoldiersPage = () => {
                                         )}
                                     </AccordionDetails>
                                 </Accordion>
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <Typography>Немає даних про взводи</Typography>
-                )}
+                            ))}
+                        </ul>
+                    ) : (
+                        <Typography>Немає даних про взводи</Typography>
+                    )}
+                </Container>
             </Box>
         </>
     );
 };
 
+const Container = styled('div')({
+    maxWidth: '50vw',
+    margin: '0 auto',
+    padding: '20px',
+});
 export default ManageSoldiersPage;
