@@ -110,7 +110,7 @@ const ManageSoldiersPage = () => {
                 name: commanderName,
                 surname: commanderSurname,
                 soldier_rank: commanderRank,
-                level_physical_fitness: 'ok',
+                level_physical_fitness: '',
             });
             const response = await axios.post(createPlatoon, {
                 company: parsedUser.company,
