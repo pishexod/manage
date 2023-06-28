@@ -7,7 +7,8 @@ const getExercise = async (req, res) => {
         const exercise = await db.exercise.findAll({
             where: {
                 company: req.query.company,
-            }
+            },
+            include: db.soldiers
         })
         res.json({status: true, data: exercise})
     } catch (e) {

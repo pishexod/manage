@@ -15,11 +15,12 @@ const StyledNavbar = styled(Navbar, ({theme, isBordered}) => ({
     ...(isBordered && {
         border: '1px solid white',
     }),
+    fontFamily:'Arial, sans-serif',
+    fontSize: "30px",
     transition: 'transform 0.3s ease',
     transform: 'translateY(0)',
     transformOrigin: 'top',
     boxShadow: '0 2px 4px rgba(182,24,24,0.8)',
-    fontFamily: 'Arial, sans-serif',
 }));
 
 export default function App() {

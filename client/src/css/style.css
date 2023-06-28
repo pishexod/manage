@@ -1,7 +1,10 @@
 .app {
     font-family: Arial, sans-serif;
 }
-
+body{
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+}
 .heading {
     font-size: 24px;
     font-weight: bold;
@@ -10,4 +13,7 @@
 .paragraph {
     font-size: 16px;
     color: #333;
+}
+.p{
+    font-size: 18px;
 }

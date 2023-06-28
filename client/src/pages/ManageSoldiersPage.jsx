@@ -55,6 +55,7 @@ const ManageSoldiersPage = () => {
                     company: parsedUser.company,
                 },
             });
+            console.log(response.data.data)
             setSoldiers(response.data.data);
         } catch (error) {
             console.log(error);
@@ -69,6 +70,7 @@ const ManageSoldiersPage = () => {
                     company: parsedUser.company,
                 },
             });
+            console.log(response.data.data)
             setPlatoons(response.data.data);
         } catch (error) {
             console.log(error);
