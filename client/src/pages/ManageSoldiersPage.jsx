@@ -9,11 +9,12 @@ import {
     allSoldiersRoute,
     createSoldiers,
     getPlatoons,
-    createPlatoon, getExercise, updateSoldier
+    createPlatoon
 } from '../utils/APIRoutes';
 import {Typography, Accordion, AccordionSummary, AccordionDetails} from '@mui/material';
 import App from "../components/App";
 import {styled} from "@mui/system";
+import UpdateSoldierModal from "../components/UpdateSoldierModal";
 
 const ManageSoldiersPage = () => {
     const [platoons, setPlatoons] = useState([]);
@@ -21,7 +22,7 @@ const ManageSoldiersPage = () => {
     const [name, setName] = useState('');
     const [surname, setSurname] = useState('');
     const [soldierRank, setSoldierRank] = useState('');
-    const [levelPhysicalFitness, setLevelPhysicalFitness] = useState('');
+    const [ setLevelPhysicalFitness] = useState('');
     const [platoonNumber, setPlatoonNumber] = useState('');
     const [commanderName, setCommanderName] = useState('');
     const [commanderSurname, setCommanderSurname] = useState('');
@@ -29,9 +30,8 @@ const ManageSoldiersPage = () => {
     const [showAddSoldierModal, setShowAddSoldierModal] = useState(false);
     const [showCreatePlatoonModal, setShowCreatePlatoonModal] = useState(false);
     const [soldiers, setSoldiers] = useState([]);
-    const [exercise, setExercise] = useState([]);
-    const [passedSoldiers, setPassedSoldiers] = useState([]);
-    const training = ['Біг на 3км.', 'Біг на 100м.', 'Біг 6х100', 'Підтягування']
+    const [selectedSoldierData, setSelectedSoldierData] = useState(null);
+    const [showSoldierModal, setShowSoldierModal] = useState(false);
 
 
     useEffect(() => {
@@ -78,21 +78,13 @@ const ManageSoldiersPage = () => {
             console.log(error);
         }
     };
-
-
-    function calculateAverageRating(ratings) {
-        if (ratings.length === 0) {
-            return 0;
-        }
-
-        const sum = ratings.reduce((total, rating) => total + rating, 0);
-        return sum / ratings.length;
+    const handleUpdateSoldier = () => {
+        fetchSoldiers();
     }
-
     const handleAddSoldier = async () => {
         try {
             const parsedUser = await getUser();
-            const response = await axios.post(createSoldiers, {
+            await axios.post(createSoldiers, {
                 user_id: parsedUser.user_id,
                 platoon: selectedPlatoon,
                 company: parsedUser.company,
@@ -125,7 +117,7 @@ const ManageSoldiersPage = () => {
                 soldier_rank: commanderRank,
                 level_physical_fitness: 0,
             });
-            const response = await axios.post(createPlatoon, {
+           await axios.post(createPlatoon, {
                 company: parsedUser.company,
                 platoon_number: platoonNumber,
                 commander_id: responseCommander.data.soldier.soldier_id,
@@ -141,13 +133,42 @@ const ManageSoldiersPage = () => {
             console.log(error);
         }
     };
+
+    function getLevelPhysicalFitnessCellClassName(params) {
+        const levelPhysicalFitness = params.value;
+
+        if (levelPhysicalFitness >= 5) {
+            return 'green-cell';
+        } else if (levelPhysicalFitness >= 4) {
+            return 'blue-cell';
+        } else if (levelPhysicalFitness >= 3) {
+            return 'yellow-cell';
+        } else if (levelPhysicalFitness > 0) {
+            return 'red-cell';
+        } else {
+            return 'black-cell';
+        }
+    }
+
+    const handleRowDoubleClick = (params) => {
+        const soldierData = params.row;
+        console.log(soldierData)
+        setSelectedSoldierData(soldierData);
+        setShowSoldierModal(true);
+    };
+
     const columns = [
         {field: 'id', headerName: '№', width: 50},
         {field: 'platoon', headerName: '№ взводу', width: 100},
         {field: 'name', headerName: "Ім'я", width: 160},
         {field: 'surname', headerName: 'Прізвище', width: 180},
         {field: 'soldierRank', headerName: 'Звання', width: 160},
-        {field: 'levelPhysicalFitness', headerName: 'Рівень фізичної підготовленості', width: 230},
+        {
+            field: 'levelPhysicalFitness',
+            headerName: 'Рівень фізичної підготовленості',
+            width: 230,
+            cellClassName: getLevelPhysicalFitnessCellClassName,
+        },
     ];
 
     return (
@@ -261,7 +282,7 @@ const ManageSoldiersPage = () => {
                     {platoons.length > 0 ? (
                         <ul>
                             {platoons.map((platoon) => (
-                                <Accordion style={{
+                                <Accordion key={platoon.platoon_id} style={{
                                     marginBottom: "20px",
                                     backgroundColor: "#D3D3D3",
                                     color: "#000000",
@@ -285,8 +306,10 @@ const ManageSoldiersPage = () => {
                                                     surname: soldier.surname,
                                                     soldierRank: soldier.soldier_rank,
                                                     levelPhysicalFitness: soldier.level_physical_fitness,
+                                                    soldier_id: soldier.soldier_id
                                                 }))
-                                            } columns={columns} autoHeight/>
+                                            } pageSizeOptions={[25]} columns={columns}
+                                                      onRowDoubleClick={handleRowDoubleClick} autoHeight/>
                                         ) : (
                                             <Typography>Немає даних про солдатів у цьому взводі</Typography>
                                         )}
@@ -297,8 +320,18 @@ const ManageSoldiersPage = () => {
                     ) : (
                         <Typography>Немає даних про взводи</Typography>
                     )}
+                    {showSoldierModal && (
+                        <UpdateSoldierModal
+                            isOpen={showSoldierModal}
+                            soldier={selectedSoldierData}
+                            onRequestClose={() => setShowSoldierModal(false)}
+                            onUpdateSoldier={handleUpdateSoldier}
+
+                        />
+                    )}
                 </Container>
             </Box>
+
         </>
     );
 };

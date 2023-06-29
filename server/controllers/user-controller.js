@@ -44,7 +44,8 @@ const getAllUsers = async (req, res) => {
     }
 };
 const updateSoldier = async (req, res) => {
-    const {soldier_id, level_physical_fitness} = req.body;
+    const {soldier_id, name, surname, soldier_rank} = req.body;
+    console.log(req.body)
     try {
         const soldier = await db.soldiers.findByPk(soldier_id);
         console.log(soldier)
@@ -56,7 +57,9 @@ const updateSoldier = async (req, res) => {
             });
         }
 
-        soldier.level_physical_fitness = level_physical_fitness;
+        soldier.name = name;
+        soldier.surname = surname;
+        soldier.soldier_rank = soldier_rank;
 
         await soldier.save();
 
@@ -73,5 +76,36 @@ const updateSoldier = async (req, res) => {
         });
     }
 };
+const deleteSoldier = async (req, res) => {
+    const {soldier_id} = req.body;
+    console.log(req.body)
+    try {
+        const soldier = await db.soldiers.findByPk(soldier_id);
+        if (!soldier) {
+            return res.json({
+                status: false,
+                message: 'Солдата не знайдено',
+            });
+        }
 
-module.exports = {addSoldiers, getAllUsers, updateSoldier}
+        await db.soldiers.destroy({
+            where: {
+                soldier_id: soldier_id
+            }
+        })
+
+        return res.json({
+            status: true,
+            message: 'Солдата видалено',
+            soldier: soldier,
+        });
+    } catch (err) {
+        console.log(err);
+        return res.json({
+            status: false,
+            message: 'Помилка при оновленні солдата',
+        });
+    }
+
+}
+module.exports = {addSoldiers, getAllUsers, updateSoldier, deleteSoldier}

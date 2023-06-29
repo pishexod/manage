@@ -9,7 +9,7 @@ import '../css/style.css'
 const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [isButtonAnimating, setIsButtonAnimating] = useState(false);
+    const [ setIsButtonAnimating] = useState(false);
     const navigate = useNavigate();
 
     const toastOption = {

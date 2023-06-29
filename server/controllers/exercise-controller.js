@@ -21,7 +21,6 @@ const saveExercise = async (req, res) => {
         rating_run6x100,
         rating_pullup
     } = req.body;
-    console.log(req.body)
     try {
         const exercise = await db.exercise.findOne({
             where: {

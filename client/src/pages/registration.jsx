@@ -10,8 +10,7 @@ import '../css/style.css'
 
 const RegistrPage = () => {
     const [username, setUsername] = useState('');
-    const [surname, setSurname] = useState('');
-    const [rank, setRank] = useState('');
+    const [rank] = useState('');
     const [company, setNumberCompany] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();

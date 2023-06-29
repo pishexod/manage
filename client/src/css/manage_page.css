@@ -73,3 +73,27 @@
 .modal button:hover {
     background-color: #0069d9;
 }
+.green-cell {
+    background-color: green;
+    color: white;
+}
+
+.blue-cell {
+    background-color: blue;
+    color: white;
+}
+.black-cell {
+    background-color: black;
+    color: white;
+
+}
+
+.yellow-cell {
+    background-color: yellow;
+    color: black;
+}
+
+.red-cell {
+    background-color: red;
+    color: white;
+}

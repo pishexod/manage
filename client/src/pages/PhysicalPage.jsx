@@ -101,7 +101,7 @@ const PhysicalPage = () => {
             response.data.data.map((exerc) => {
                 if (exerc.rating_run3km !== 0 && exerc.rating_run100m !== 0 && exerc.rating_run6x100 && exerc.rating_pullup) {
                     const rating = (parseInt(exerc.rating_run3km) + parseInt(exerc.rating_run100m) + parseInt(exerc.rating_run6x100) + exerc.rating_pullup) / 4;
-                    const responseUpdateUserLevel = axios.post(updateSoldier, {
+                   axios.post(updateSoldier, {
                         soldier_id: exerc.soldier.soldier_id,
                         level_physical_fitness: rating
                     })
@@ -184,7 +184,16 @@ const PhysicalPage = () => {
     };
 
     const handleResultChange = (event) => {
-        setSelectedResult(event.target.value);
+        let value = event.target.value;
+        if (selectedExercise === 'Біг на 3км.' || selectedExercise === 'Біг 6х100') {
+            if (value.length === 2) {
+                value += ':'
+            }
+        } else if (selectedExercise === 'Біг на 100м.')
+            if (value.length === 2) {
+                value += '.'
+            }
+        setSelectedResult(value);
     };
     const handleFormSubmit = async (event) => {
         event.preventDefault();
@@ -215,19 +224,43 @@ const PhysicalPage = () => {
         }
     };
 
+    function getLevelPhysicalFitnessCellClassName(params) {
+        const levelPhysicalFitness = params.value;
+
+        if (levelPhysicalFitness >= 5) {
+            return 'green-cell';
+        } else if (levelPhysicalFitness >= 4) {
+            return 'blue-cell';
+        } else if (levelPhysicalFitness >= 3) {
+            return 'yellow-cell';
+        } else {
+            return 'red-cell';
+        }
+    }
+
     const columns = [
         {field: 'id', headerName: '№', width: 50},
         {field: 'name', headerName: "Ім'я", width: 100},
         {field: 'surname', headerName: 'Прізвище', width: 100},
         {field: 'soldierRank', headerName: 'Звання', width: 100},
         {field: 'run3km', headerName: 'Біг на 3км.', width: 100},
-        {field: 'rating_run3km', headerName: 'Оцінка', width: 70},
+        {field: 'rating_run3km', headerName: 'Оцінка', width: 70, cellClassName: getLevelPhysicalFitnessCellClassName,},
         {field: 'run100m', headerName: 'Біг на 100м.', width: 100},
-        {field: 'rating_run100m', headerName: 'Оцінка', width: 70},
+        {
+            field: 'rating_run100m',
+            headerName: 'Оцінка',
+            width: 70,
+            cellClassName: getLevelPhysicalFitnessCellClassName,
+        },
         {field: 'run6x100', headerName: 'Біг 6х100', width: 100},
-        {field: 'rating_run6x100', headerName: 'Оцінка', width: 70},
+        {
+            field: 'rating_run6x100',
+            headerName: 'Оцінка',
+            width: 70,
+            cellClassName: getLevelPhysicalFitnessCellClassName,
+        },
         {field: 'pullup', headerName: 'Підтягування', width: 100},
-        {field: 'rating_pullup', headerName: 'Оцінка', width: 70},
+        {field: 'rating_pullup', headerName: 'Оцінка', width: 70, cellClassName: getLevelPhysicalFitnessCellClassName,},
     ];
 
 
