@@ -34,6 +34,7 @@ const ManageSoldiersPage = () => {
     const [showSoldierModal, setShowSoldierModal] = useState(false);
 
 
+
     useEffect(() => {
         fetchPlatoons();
         fetchSoldiers();

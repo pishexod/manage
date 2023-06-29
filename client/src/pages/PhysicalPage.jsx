@@ -233,8 +233,10 @@ const PhysicalPage = () => {
             return 'blue-cell';
         } else if (levelPhysicalFitness >= 3) {
             return 'yellow-cell';
-        } else {
+        } else if (levelPhysicalFitness > 0) {
             return 'red-cell';
+        } else {
+            return 'black-cell';
         }
     }
 
