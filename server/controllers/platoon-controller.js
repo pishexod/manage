@@ -2,7 +2,6 @@ const db = require('../models');
 require('dotenv').config()
 const createPlatoon = async (req, res) => {
     let {platoon_number, commander_id, company} = req.body;
-    console.log(req.body)
     try {
         let platoons = await db.platoon.findOne({
             where: {
@@ -23,7 +22,6 @@ const createPlatoon = async (req, res) => {
 }
 const getAllPlatoons = async (req, res) => {
     try {
-        console.log(req.query)
         const platoons = await db.platoon.findAll({
             where: {
                 company: req.query.company

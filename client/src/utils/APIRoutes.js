@@ -4,6 +4,7 @@ export const loginRoute = `${host}/api/auth/login`;
 export const checkauth = `${host}/api/auth/checkauth`;
 export const allSoldiersRoute = `${host}/api/users/soldiers`;
 export const createSoldiers = `${host}/api/users/createSoldiers`;
+export const updateSoldier = `${host}/api/users/updateSoldier`;
 export const getTraining = `${host}/api/training/getTraining`;
 export const createTraining = `${host}/api/training/createTraining`;
 export const getPlatoons = `${host}/api/platoon/getPlatoons`;

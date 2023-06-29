@@ -48,7 +48,6 @@ const login = async (req, res) => {
 
 const verifyJWT = (req, res, next) => {
     const token = req.headers['access-token'];
-    console.log(token);
     if (!token) {
         console.log('need token');
         res.status(401).json({status: false, message: "Ми потребуємо токен"}); // Оновлено: Виправлено статус відповіді на 401

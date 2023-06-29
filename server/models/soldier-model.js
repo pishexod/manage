@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         level_physical_fitness: {
-            type: DataTypes.STRING,
+            type: DataTypes.FLOAT,
             allowNull: false
         }
     }, {

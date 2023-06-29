@@ -8,7 +8,7 @@ import {
     getPlatoons,
     getExercise,
     createExercise,
-    allSoldiersRoute
+    allSoldiersRoute, updateSoldier
 
 } from '../utils/APIRoutes';
 import axios from "axios";
@@ -27,9 +27,14 @@ const PhysicalPage = () => {
     const [platoons, setPlatoons] = useState([]);
     const [soldiers, setSoldiers] = useState([]);
     const [exercise, setExercise] = useState([]);
-    const [showDataGrid, setShowDataGrid] = useState(false);
 
-    const training = ['Біг на 3км.', 'Біг на 100м.', 'Біг 6х100', 'Підтягування']
+
+    const training = {
+        run3km: 'Біг на 3км.',
+        run100m: 'Біг на 100м.',
+        run6x100: 'Біг 6х100',
+        pullup: 'Підтягування'
+    }
     const getUser = () => {
         try {
             const storedUser = localStorage.getItem('user');
@@ -54,16 +59,10 @@ const PhysicalPage = () => {
 
     useEffect(() => {
         fetchPlatoons();
-        fetchExercise();
         fetchSoldiers();
+        fetchExercise();
     }, [])
 
-    const handleDataGridShow = () => {
-        setShowDataGrid(true)
-    }
-    const handleDataGridClose = () => {
-        setShowDataGrid(false);
-    }
     const fetchPlatoons = async () => {
         try {
             const parsedUser = await getUser();
@@ -99,12 +98,77 @@ const PhysicalPage = () => {
                     company: parsedUser.company,
                 },
             });
-            console.log(response.data.data)
+            response.data.data.map((exerc) => {
+                if (exerc.rating_run3km !== 0 && exerc.rating_run100m !== 0 && exerc.rating_run6x100 && exerc.rating_pullup) {
+                    const rating = (parseInt(exerc.rating_run3km) + parseInt(exerc.rating_run100m) + parseInt(exerc.rating_run6x100) + exerc.rating_pullup) / 4;
+                    const responseUpdateUserLevel = axios.post(updateSoldier, {
+                        soldier_id: exerc.soldier.soldier_id,
+                        level_physical_fitness: rating
+                    })
+                }
+            })
             setExercise(response.data.data);
         } catch (error) {
             console.log(error);
         }
     }
+
+    const calculateRating = (exercise, result) => {
+            console.log(exercise)
+            if (exercise === 'Підтягування') {
+                if (result >= 15) {
+                    return 5;
+                } else if (result >= 12) {
+                    return 4;
+                } else if (result >= 8) {
+                    return 3;
+                } else {
+                    return 2;
+                }
+            } else if (exercise === 'Біг на 3км.') {
+                const [minutes, seconds] = result.split(':');
+                const totalTimeInSeconds = parseInt(minutes) * 60 + parseInt(seconds);
+
+                if (totalTimeInSeconds <= 780) {
+                    return 5;
+                } else if (totalTimeInSeconds <= 820) {
+                    return 4;
+                } else if (totalTimeInSeconds <= 850) {
+                    return 3;
+                } else {
+                    return 2;
+                }
+            } else if (exercise === 'Біг 6х100') {
+                const [minutes, seconds] = result.split(':');
+                const totalTimeInSeconds = parseInt(minutes) * 60 + parseInt(seconds);
+
+                if (totalTimeInSeconds <= 110) {
+                    return 5;
+                } else if (totalTimeInSeconds <= 120) {
+                    return 4;
+                } else if (totalTimeInSeconds <= 135) {
+                    return 3;
+                } else {
+                    return 2;
+                }
+            } else if (exercise === 'Біг на 100м.') {
+                console.log('ok')
+                const [seconds, miliseconds] = result.split('.');
+                const totalTimeInSeconds = parseInt(seconds) * 100 + parseInt(miliseconds);
+                console.log(totalTimeInSeconds)
+                if (totalTimeInSeconds <= 1100) {
+                    return 5;
+                } else if (totalTimeInSeconds <= 1200) {
+                    return 4;
+                } else if (totalTimeInSeconds <= 1400) {
+                    return 3;
+                } else {
+                    return 2;
+                }
+            }
+            return 0;
+        }
+    ;
 
     const handlePlatoonChange = (event) => {
         setSelectedPlatoon(event.target.value);
@@ -116,27 +180,35 @@ const PhysicalPage = () => {
 
     const handleExerciseChange = (event) => {
         setSelectedExercise(event.target.value);
-        console.log(event.target.value)
+        console.log(event.target)
     };
 
     const handleResultChange = (event) => {
         setSelectedResult(event.target.value);
     };
-
     const handleFormSubmit = async (event) => {
         event.preventDefault();
-        console.log(selectedPlatoon, selectedSoldier, selectedExercise, selectedResult);
         try {
             const parsedUser = await getUser();
-            const response = await axios.post(createExercise, {
+            const rating = calculateRating(selectedExercise, selectedResult);
+            console.log(rating + ' ok')
+            let exerciseData = {
                 company: parsedUser.company,
                 platoon_number: selectedPlatoon,
                 soldier_id: selectedSoldier,
-                exercise: selectedExercise,
-                result: selectedResult
-            })
+                run3km: selectedExercise === 'Біг на 3км.' ? selectedResult : 'Не здавав',
+                run100m: selectedExercise === 'Біг на 100м.' ? selectedResult : 'Не здавав',
+                run6x100: selectedExercise === 'Біг 6х100' ? selectedResult : 'Не здавав',
+                pullup: selectedExercise === 'Підтягування' ? selectedResult : 'Не здавав',
+                rating_run3km: selectedExercise === 'Біг на 3км.' ? rating : 0,
+                rating_run100m: selectedExercise === 'Біг на 100м.' ? rating : 0,
+                rating_run6x100: selectedExercise === 'Біг 6х100' ? rating : 0,
+                rating_pullup: selectedExercise === 'Підтягування' ? rating : 0,
+            };
+            console.log(exerciseData)
+            await axios.post(createExercise, exerciseData);
             await fetchExercise();
-            console.log(response)
+
             handleModalClose();
         } catch (e) {
             console.log(e)
@@ -145,12 +217,17 @@ const PhysicalPage = () => {
 
     const columns = [
         {field: 'id', headerName: '№', width: 50},
-        {field: 'name', headerName: "Ім'я", width: 150},
-        {field: 'surname', headerName: 'Прізвище', width: 150},
-        {field: 'soldierRank', headerName: 'Звання', width: 150},
-        {field: 'exercise', headerName: 'Вправа', width: 140},
-        {field: 'result', headerName: 'Результат', width: 140},
-        {field: 'rating', headerName: 'Оцінка', width: 100},
+        {field: 'name', headerName: "Ім'я", width: 100},
+        {field: 'surname', headerName: 'Прізвище', width: 100},
+        {field: 'soldierRank', headerName: 'Звання', width: 100},
+        {field: 'run3km', headerName: 'Біг на 3км.', width: 100},
+        {field: 'rating_run3km', headerName: 'Оцінка', width: 70},
+        {field: 'run100m', headerName: 'Біг на 100м.', width: 100},
+        {field: 'rating_run100m', headerName: 'Оцінка', width: 70},
+        {field: 'run6x100', headerName: 'Біг 6х100', width: 100},
+        {field: 'rating_run6x100', headerName: 'Оцінка', width: 70},
+        {field: 'pullup', headerName: 'Підтягування', width: 100},
+        {field: 'rating_pullup', headerName: 'Оцінка', width: 70},
     ];
 
 
@@ -202,11 +279,13 @@ const PhysicalPage = () => {
                                     Виберіть вправу:
                                     <select value={selectedExercise} onChange={handleExerciseChange}>
                                         <option value="">Виберіть вправу</option>
-                                        {training.map((train) =>
-                                            <option key={train} value={train}>
-                                                {train}
-                                            </option>
-                                        )}
+                                        {Object.keys(training).map((key) => {
+                                            return (
+                                                <option key={key} value={training[key]}>
+                                                    {training[key]}
+                                                </option>
+                                            );
+                                        })}
                                     </select>
                                 </label>
                             </div>
@@ -235,62 +314,27 @@ const PhysicalPage = () => {
                                         <Typography variant="subtitle1">Взвод №{platoon.platoon_number}</Typography>
                                     </AccordionSummary>
                                     <AccordionDetails style={{background: "#ffffff"}}>
-                                        {showDataGrid ? (
-                                            <>
-                                                <div style={{height: 400, width: "100%"}}>
-                                                    {exercise
-                                                        .filter((training) => training.exercise === selectedExercise)
-                                                        ? (
-                                                            <DataGrid rows={exercise
-                                                                .filter((training) => training.platoon_number === platoon.platoon_number && training.exercise === selectedExercise)
-                                                                .map((training, index) => ({
-                                                                    id: index + 1,
-                                                                    name: training.soldier.name,
-                                                                    surname: training.soldier.surname,
-                                                                    soldierRank: training.soldier.soldier_rank,
-                                                                    exercise: training.exercise,
-                                                                    result: training.result,
-                                                                    rating: ''
-                                                                }))
-                                                            } columns={columns}/>
-                                                        ) : (
-                                                            <Typography>Немає даних про солдатів у цьому
-                                                                взводі</Typography>
-                                                        )}
-                                                </div>
-                                                <div className="container">
-                                                    <div className="button-row">
-                                                        <button className="btn" onClick={handleDataGridClose}>
-                                                            Повернутися
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </>
-
-                                        ) : (
-                                            <div className="container">
-                                                <div className="button-row">
-                                                    Виберіть вправи:
-                                                    {training.map((exercise) => (
-
-                                                        <label key={exercise}>
-                                                            <input
-                                                                type="checkbox"
-                                                                value={exercise}
-                                                                checked={selectedExercise.includes(exercise)}
-                                                                onChange={handleExerciseChange}
-                                                                name={"checkbox-" + platoon.platoon_number}
-                                                            />
-                                                            {exercise}
-                                                        </label>
-                                                    ))}
-                                                    <button className="btn" onClick={handleDataGridShow}>
-                                                        Підтвердити
-                                                    </button>
-                                                </div>
+                                        <>
+                                            <div style={{height: 400, width: "100%"}}>
+                                                <DataGrid rows={exercise
+                                                    .filter((training) => training.platoon_number === platoon.platoon_number)
+                                                    .map((training, index) => ({
+                                                        id: index + 1,
+                                                        name: training.soldier.name,
+                                                        surname: training.soldier.surname,
+                                                        soldierRank: training.soldier.soldier_rank,
+                                                        run3km: training.run3km,
+                                                        rating_run3km: training.rating_run3km,
+                                                        run100m: training.run100m,
+                                                        rating_run100m: training.rating_run100m,
+                                                        run6x100: training.run6x100,
+                                                        rating_run6x100: training.rating_run6x100,
+                                                        pullup: training.pullup,
+                                                        rating_pullup: training.rating_pullup
+                                                    }))
+                                                } columns={columns}/>
                                             </div>
-                                        )}
-
+                                        </>
                                     </AccordionDetails>
                                 </Accordion>
                             ))}

@@ -9,7 +9,7 @@ import {
     allSoldiersRoute,
     createSoldiers,
     getPlatoons,
-    createPlatoon,
+    createPlatoon, getExercise, updateSoldier
 } from '../utils/APIRoutes';
 import {Typography, Accordion, AccordionSummary, AccordionDetails} from '@mui/material';
 import App from "../components/App";
@@ -29,6 +29,10 @@ const ManageSoldiersPage = () => {
     const [showAddSoldierModal, setShowAddSoldierModal] = useState(false);
     const [showCreatePlatoonModal, setShowCreatePlatoonModal] = useState(false);
     const [soldiers, setSoldiers] = useState([]);
+    const [exercise, setExercise] = useState([]);
+    const [passedSoldiers, setPassedSoldiers] = useState([]);
+    const training = ['Біг на 3км.', 'Біг на 100м.', 'Біг 6х100', 'Підтягування']
+
 
     useEffect(() => {
         fetchPlatoons();
@@ -55,7 +59,6 @@ const ManageSoldiersPage = () => {
                     company: parsedUser.company,
                 },
             });
-            console.log(response.data.data)
             setSoldiers(response.data.data);
         } catch (error) {
             console.log(error);
@@ -70,12 +73,21 @@ const ManageSoldiersPage = () => {
                     company: parsedUser.company,
                 },
             });
-            console.log(response.data.data)
             setPlatoons(response.data.data);
         } catch (error) {
             console.log(error);
         }
     };
+
+
+    function calculateAverageRating(ratings) {
+        if (ratings.length === 0) {
+            return 0;
+        }
+
+        const sum = ratings.reduce((total, rating) => total + rating, 0);
+        return sum / ratings.length;
+    }
 
     const handleAddSoldier = async () => {
         try {
@@ -87,16 +99,15 @@ const ManageSoldiersPage = () => {
                 name,
                 surname,
                 soldier_rank: soldierRank,
-                level_physical_fitness: levelPhysicalFitness,
+                level_physical_fitness: 0,
             });
-            console.log(response.data);
             await fetchSoldiers();
             setSelectedPlatoon('')
             setName('');
             setSurname('');
             setSoldierRank('');
             setLevelPhysicalFitness('');
-            setShowAddSoldierModal(false); // Закриття модального вікна після додавання солдата
+            setShowAddSoldierModal(false);
         } catch (error) {
             console.log(error);
         }
@@ -112,7 +123,7 @@ const ManageSoldiersPage = () => {
                 name: commanderName,
                 surname: commanderSurname,
                 soldier_rank: commanderRank,
-                level_physical_fitness: '',
+                level_physical_fitness: 0,
             });
             const response = await axios.post(createPlatoon, {
                 company: parsedUser.company,
@@ -125,7 +136,7 @@ const ManageSoldiersPage = () => {
             setCommanderName('');
             setCommanderSurname('');
             setCommanderRank('');
-            setShowCreatePlatoonModal(false); // Закриття модального вікна після створення взводу
+            setShowCreatePlatoonModal(false);
         } catch (error) {
             console.log(error);
         }
@@ -133,11 +144,12 @@ const ManageSoldiersPage = () => {
     const columns = [
         {field: 'id', headerName: '№', width: 50},
         {field: 'platoon', headerName: '№ взводу', width: 100},
-        {field: 'name', headerName: "Ім'я", width: 180},
-        {field: 'surname', headerName: 'Прізвище', width: 200},
-        {field: 'soldierRank', headerName: 'Звання', width: 180},
-        {field: 'levelPhysicalFitness', headerName: 'Рівень фізичної підготовленості', width: 280},
+        {field: 'name', headerName: "Ім'я", width: 160},
+        {field: 'surname', headerName: 'Прізвище', width: 180},
+        {field: 'soldierRank', headerName: 'Звання', width: 160},
+        {field: 'levelPhysicalFitness', headerName: 'Рівень фізичної підготовленості', width: 230},
     ];
+
     return (
         <>
             <App/>
@@ -158,7 +170,7 @@ const ManageSoldiersPage = () => {
                                 className="modal"
                                 overlayClassName="modal-overlay"
                             >
-                                <h3>Додати солдата</h3>
+                                <h3>Додати в/с</h3>
                                 <select
                                     value={selectedPlatoon}
                                     onChange={(e) => setSelectedPlatoon(e.target.value)}
@@ -189,14 +201,7 @@ const ManageSoldiersPage = () => {
                                     type="text"
                                     value={soldierRank}
                                     onChange={(e) => setSoldierRank(e.target.value)}
-                                    placeholder="Ранг солдата"
-                                />
-                                <br/>
-                                <input
-                                    type="text"
-                                    value={levelPhysicalFitness}
-                                    onChange={(e) => setLevelPhysicalFitness(e.target.value)}
-                                    placeholder="Рівень фізичної підготовки"
+                                    placeholder="Звання в/с"
                                 />
                                 <br/>
                                 <button className="btn" onClick={handleAddSoldier}>
