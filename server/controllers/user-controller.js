@@ -44,11 +44,11 @@ const getAllUsers = async (req, res) => {
     }
 };
 const updateSoldier = async (req, res) => {
-    const {soldier_id, name, surname, soldier_rank} = req.body;
+    const {soldier_id, name, surname, soldier_rank, level_physical_fitness} = req.body;
     console.log(req.body)
     try {
         const soldier = await db.soldiers.findByPk(soldier_id);
-        console.log(soldier)
+        // console.log(soldier)
 
         if (!soldier) {
             return res.json({
@@ -56,10 +56,14 @@ const updateSoldier = async (req, res) => {
                 message: 'Солдата не знайдено',
             });
         }
-
-        soldier.name = name;
-        soldier.surname = surname;
-        soldier.soldier_rank = soldier_rank;
+        if (name != null)
+            soldier.name = name;
+        if (surname != null)
+            soldier.surname = surname;
+        if (soldier_rank != null)
+            soldier.soldier_rank = soldier_rank;
+        if (level_physical_fitness != null)
+            soldier.level_physical_fitness = level_physical_fitness;
 
         await soldier.save();
 

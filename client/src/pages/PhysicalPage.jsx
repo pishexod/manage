@@ -99,7 +99,7 @@ const PhysicalPage = () => {
                 },
             });
             response.data.data.map((exerc) => {
-                if (exerc.rating_run3km !== 0 && exerc.rating_run100m !== 0 && exerc.rating_run6x100 && exerc.rating_pullup) {
+                if (exerc.rating_run3km !== 0 && exerc.rating_run100m !== 0 && exerc.rating_run6x100 && exerc.rating_pullup !==0) {
                     const rating = (parseInt(exerc.rating_run3km) + parseInt(exerc.rating_run100m) + parseInt(exerc.rating_run6x100) + exerc.rating_pullup) / 4;
                    axios.post(updateSoldier, {
                         soldier_id: exerc.soldier.soldier_id,
