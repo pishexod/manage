@@ -10,9 +10,10 @@ import '../css/style.css'
 
 const RegistrPage = () => {
     const [username, setUsername] = useState('');
-    const [rank] = useState('');
+    const [rank, setRank] = useState('');
     const [company, setNumberCompany] = useState('');
     const [password, setPassword] = useState('');
+    const [surname, setSurname] = useState('');
     const navigate = useNavigate();
 
     const toastOption = {
@@ -25,7 +26,12 @@ const RegistrPage = () => {
     const handleFirstNameChange = (e) => {
         setUsername(e.target.value);
     };
-
+    const handleSurnameChange = (e) => {
+        setSurname(e.target.value);
+    };
+    const handleRankChange = (e) => {
+        setRank(e.target.value);
+    };
     const handleNumberCompanyChange = (e) => {
         setNumberCompany(e.target.value);
     };
@@ -46,6 +52,8 @@ const RegistrPage = () => {
         if (handleValidation()) {
             const {data} = await axios.post(registerRoute, {
                 username,
+                surname,
+                rank,
                 password,
                 company: company
             })
@@ -104,6 +112,36 @@ const RegistrPage = () => {
                                 type="text"
                                 value={username}
                                 onChange={handleFirstNameChange}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label style={{display: "block", marginBottom: "10px"}}>
+                                Введіть прізвище
+                            </label>
+                            <Input
+                                auto
+                                css={{
+                                    width: "100%",
+                                }}
+                                type="text"
+                                value={surname}
+                                onChange={handleSurnameChange}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label style={{display: "block", marginBottom: "10px"}}>
+                                Введіть звання
+                            </label>
+                            <Input
+                                auto
+                                css={{
+                                    width: "100%",
+                                }}
+                                type="text"
+                                value={rank}
+                                onChange={handleRankChange}
                                 required
                             />
                         </div>

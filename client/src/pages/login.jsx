@@ -1,15 +1,15 @@
-import React, {useState} from "react";
-import {ToastContainer, toast} from "react-toastify";
-import {loginRoute} from "../utils/APIRoutes";
+import React, { useState } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import { loginRoute } from "../utils/APIRoutes";
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
-import {Button, Input} from "@nextui-org/react";
-import '../css/style.css'
+import { useNavigate } from "react-router-dom";
+import { Button, Input } from "@nextui-org/react";
+import "../css/style.css";
 
 const LoginPage = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [ setIsButtonAnimating] = useState(false);
+    const [isButtonAnimating, setIsButtonAnimating] = useState(false);
     const navigate = useNavigate();
 
     const toastOption = {
@@ -79,7 +79,7 @@ const LoginPage = () => {
                     }}
                     onSubmit={handleSubmit}
                 >
-                    <h2 style={{textAlign: "center", marginBottom: "50px"}}>
+                    <h2 style={{ textAlign: "center", marginBottom: "50px" }}>
                         Авторизація
                     </h2>
                     <div
@@ -90,7 +90,9 @@ const LoginPage = () => {
                         }}
                     >
                         <div>
-                            <label style={{display: "block", marginBottom: "10px"}}>
+                            <label
+                                style={{ display: "block", marginBottom: "10px" }}
+                            >
                                 Введіть ім'я
                             </label>
                             <Input
@@ -104,7 +106,9 @@ const LoginPage = () => {
                             />
                         </div>
                         <div>
-                            <label style={{display: "block", marginBottom: "10px"}}>
+                            <label
+                                style={{ display: "block", marginBottom: "10px" }}
+                            >
                                 Введіть пароль
                             </label>
                             <Input.Password
@@ -185,7 +189,7 @@ const LoginPage = () => {
                     </a>
                 </form>
             </div>
-            <ToastContainer/>
+            <ToastContainer />
         </>
     );
 };

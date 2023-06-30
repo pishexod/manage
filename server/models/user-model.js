@@ -6,6 +6,8 @@ module.exports = (sequelize, DataTypes) => {
                 autoIncrement: true
             },
             username: {type: DataTypes.STRING, unique: true, allowNull: false},
+            surname: {type: DataTypes.STRING, unique: true, allowNull: false},
+            rank: {type: DataTypes.STRING, allowNull: false},
             password: {type: DataTypes.STRING, allowNull: false},
             company: {type: DataTypes.INTEGER, allowNull: false}
         }, {timestamps: false}

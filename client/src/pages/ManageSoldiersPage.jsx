@@ -64,7 +64,6 @@ const ManageSoldiersPage = () => {
         } catch (error) {
             console.log(error);
         }
-
     }
     const fetchPlatoons = async () => {
         try {
@@ -118,6 +117,7 @@ const ManageSoldiersPage = () => {
                 soldier_rank: commanderRank,
                 level_physical_fitness: 0,
             });
+            console.log(responseCommander)
            await axios.post(createPlatoon, {
                 company: parsedUser.company,
                 platoon_number: platoonNumber,

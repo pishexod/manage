@@ -5,14 +5,14 @@ require('dotenv').config()
 
 
 const registration = async (req, res) => {
-    let {username, password, company} = req.body;
+    let {username, surname, rank, password, company} = req.body;
     try {
         let user = await db.users.findOne({
             where: {username: username}
         });
         if (!user) {
             let hashedPassword = await bcrypt.hash(password, 3);
-            let newUser = await db.users.create({username, password: hashedPassword, company});
+            let newUser = await db.users.create({username, password: hashedPassword, company, surname, rank});
             const token = jwt.sign({user}, "jwt-secret-suka-token", {expiresIn: "24h"});
             return res.json({status: true, message: 'Користувача створено', token, user: newUser});
         }

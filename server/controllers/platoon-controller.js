@@ -2,6 +2,7 @@ const db = require('../models');
 require('dotenv').config()
 const createPlatoon = async (req, res) => {
     let {platoon_number, commander_id, company} = req.body;
+    console.log(req.body)
     try {
         let platoons = await db.platoon.findOne({
             where: {
